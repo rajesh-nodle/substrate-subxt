@@ -148,7 +148,7 @@ impl<T: Runtime + System> EventsDecoder<T> {
             let event_metadata = module.event(event_variant)?;
 
 			log::info!(
-				"EventsDecoder::decode_events>[{:#?}]=> received event '{}::{}' ({:?})",
+				"EventsDecoder::decode_events>[{:#?}]=> received name-{:?} | metadata.name-{:?} | ({:?})",
 				line!(),
                 module.name(),
                 event_metadata.name,
@@ -163,6 +163,15 @@ impl<T: Runtime + System> EventsDecoder<T> {
                 &mut event_data,
                 &mut event_errors,
             );
+
+			log::info!(
+				"EventsDecoder::decode_events>[{:#?}]=> result-{:?} | evt.data-{:?} | evt.errors-{:?}",
+				line!(),
+                result,
+                event_data,
+                event_errors
+            );
+
             let raw = match result {
                 Ok(()) => {
                     log::debug!("raw bytes: {}", hex::encode(&event_data),);
