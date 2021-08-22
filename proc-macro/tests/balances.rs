@@ -106,9 +106,14 @@ subxt_test!({
 });
 
 #[async_std::test]
-#[ignore]
 async fn transfer_balance_example() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
+
+	log::info!(
+		"transfer_balance_example=>[{:#?}]=> Enter",
+		line!(),
+	);
+	
     let client = ClientBuilder::<KusamaRuntime>::new().build().await?;
     let signer = PairSigner::new(AccountKeyring::Alice.pair());
     let alice = AccountKeyring::Alice.to_account_id();
@@ -141,5 +146,11 @@ async fn transfer_balance_example() -> Result<(), Box<dyn std::error::Error>> {
 
     assert_eq!(pre.0.free, post.0.free - 10_000);
     assert_eq!(pre.1.free, post.1.free + 10_000);
+
+	log::info!(
+		"transfer_balance_example=>[{:#?}]=> Exit",
+		line!(),
+	);
+
     Ok(())
 }
