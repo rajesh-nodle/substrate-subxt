@@ -541,7 +541,11 @@ impl<T: Runtime> Rpc<T> {
         }?;
         let mut xt_sub = self.watch_extrinsic(extrinsic).await?;
 
-		log::info!("xt_sub {:?}", xt_sub);
+		log::info!(
+			"submit_and_watch_extrinsic>[{:#?}]=> {:?}]",
+			line!(),
+			xt_sub,
+		);
 
         while let Ok(Some(status)) = xt_sub.next().await {
             log::info!("received status {:?}", status);
@@ -585,7 +589,14 @@ impl<T: Runtime> Rpc<T> {
         block_hash: T::Hash,
         ext_hash: T::Hash,
     ) -> Result<ExtrinsicSuccess<T>, Error> {
-        log::info!("Fetching block {:?}", block_hash);
+
+		log::info!(
+			"process_block>[{:#?}]=> Enter",
+			line!(),
+		);
+
+		log::info!("Fetching block {:?}", block_hash);
+
         if let Some(signed_block) = self.block(Some(block_hash)).await? {
             log::info!(
                 "Found block {:?}, with {} extrinsics",
@@ -612,12 +623,22 @@ impl<T: Runtime> Rpc<T> {
             while let Some(event) = sub.next().await {
                 events.push(event?);
             }
+			log::info!(
+				"process_block>[{:#?}]=> OK Exit",
+				line!(),
+			);
             Ok(ExtrinsicSuccess {
                 block: block_hash,
                 extrinsic: ext_hash,
                 events,
             })
         } else {
+
+			log::info!(
+				"process_block>[{:#?}]=> Err Exit",
+				line!(),
+			);
+
             Err(format!("Failed to find block {:?}", block_hash).into())
         }
     }
