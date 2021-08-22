@@ -541,6 +541,8 @@ impl<T: Runtime> Rpc<T> {
         }?;
         let mut xt_sub = self.watch_extrinsic(extrinsic).await?;
 
+		log::info!("xt_sub {:?}", xt_sub);
+
         while let Ok(Some(status)) = xt_sub.next().await {
             log::info!("received status {:?}", status);
             match status {
