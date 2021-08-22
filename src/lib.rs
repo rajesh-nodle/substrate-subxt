@@ -610,7 +610,7 @@ impl<T: Runtime> Client<T> {
             Send + Sync,
     {
 
-		log::error!(
+		log::info!(
 			"watch=>[{:#?}]=> Enter",
 			line!(),
 		);
@@ -618,7 +618,7 @@ impl<T: Runtime> Client<T> {
         let extrinsic = self.create_signed(call, signer).await?;
         let rval = self.submit_and_watch_extrinsic(extrinsic).await;
 
-		log::error!(
+		log::info!(
 			"watch=>[{:#?}]=> Exit",
 			line!(),
 		);
