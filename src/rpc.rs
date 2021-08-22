@@ -622,27 +622,10 @@ impl<T: Runtime> Rpc<T> {
             let mut events = vec![];
 
 			// while let Some(maybe_event) = sub.next().await {
-
-			// 	if event.is_ok() {
-			// 		log::info!(
-			// 			"process_block>[{:#?}]=> Ok Event-{:?}",
-			// 			line!(),
-			// 			event
-			// 		);
-			// 		// events.push(event?);
-			// 		events.push(event);
-			// 	}
-			// 	else {
-			// 		log::info!(
-			// 			"process_block>[{:#?}]=> Err Event-{:?}",
-			// 			line!(),
-			// 			event
-			// 		);
-			// 	}
-            // }
+			// 	events.push(event?);
+			// }
 
 			while let Some(maybe_event) = sub.next().await {
-
 				match maybe_event {
 					Ok(event) => {
 						log::info!(

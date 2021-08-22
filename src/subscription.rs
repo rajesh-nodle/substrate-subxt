@@ -90,6 +90,12 @@ impl<'a, T: Runtime> EventSubscription<'a, T> {
 
     /// Gets the next event.
     pub async fn next(&mut self) -> Option<Result<RawEvent, Error>> {
+
+		log::info!(
+			"EventSubscription::next>[{:#?}]=> Enter",
+			line!(),
+		);
+
         loop {
             if let Some(event) = self.events.pop_front() {
                 return Some(Ok(event))
@@ -108,32 +114,58 @@ impl<'a, T: Runtime> EventSubscription<'a, T> {
             }
             for (_key, data) in change_set.changes {
                 if let Some(data) = data {
+
                     let raw_events = match self.decoder.decode_events(&mut &data.0[..]) {
                         Ok(events) => events,
                         Err(error) => return Some(Err(error)),
                     };
+
+					log::info!(
+						"EventSubscription::next>[{:#?}]=> raw_events-[{:?}]",
+						line!(),
+						raw_events
+					);
+
                     for (phase, raw) in raw_events {
+
                         if let Phase::ApplyExtrinsic(i) = phase {
-                            if let Some(ext_index) = self.extrinsic {
+
+							if let Some(ext_index) = self.extrinsic {
                                 if i as usize != ext_index {
                                     continue
                                 }
                             }
+
                             let event = match raw {
                                 Raw::Event(event) => event,
                                 Raw::Error(err) => return Some(Err(err.into())),
                             };
+
                             if let Some((module, variant)) = self.event {
                                 if event.module != module || event.variant != variant {
                                     continue
                                 }
                             }
+
+							log::info!(
+								"EventSubscription::next>[{:#?}]=> mod-[{:?}] | varient-[{:?}]",
+								line!(),
+								event.module,
+								event.variant
+							);
+
                             self.events.push_back(event);
                         }
                     }
                 }
             }
         }
+
+		log::info!(
+			"EventSubscription::next>[{:#?}]=> Exit",
+			line!(),
+		);
+
     }
 }
 
