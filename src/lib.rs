@@ -609,8 +609,21 @@ impl<T: Runtime> Client<T> {
         <<T::Extra as SignedExtra<T>>::Extra as SignedExtension>::AdditionalSigned:
             Send + Sync,
     {
+
+		log::error!(
+			"watch=>[{:#?}]=> Enter",
+			line!(),
+		);
+
         let extrinsic = self.create_signed(call, signer).await?;
-        self.submit_and_watch_extrinsic(extrinsic).await
+        let rval = self.submit_and_watch_extrinsic(extrinsic).await;
+
+		log::error!(
+			"watch=>[{:#?}]=> Exit",
+			line!(),
+		);
+
+		rval
     }
 
     /// Insert a key into the keystore.
