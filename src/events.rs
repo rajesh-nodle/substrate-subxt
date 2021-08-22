@@ -147,8 +147,9 @@ impl<T: Runtime + System> EventsDecoder<T> {
             let event_variant = input.read_byte()?;
             let event_metadata = module.event(event_variant)?;
 
-            log::debug!(
-                "received event '{}::{}' ({:?})",
+			log::info!(
+				"EventsDecoder::decode_events>[{:#?}]=> received event '{}::{}' ({:?})",
+				line!(),
                 module.name(),
                 event_metadata.name,
                 event_metadata.arguments()
