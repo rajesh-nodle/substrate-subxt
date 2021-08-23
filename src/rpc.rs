@@ -606,10 +606,29 @@ impl<T: Runtime> Rpc<T> {
                 })?;
             let mut sub = EventSubscription::new(events_sub, decoder);
             sub.filter_extrinsic(block_hash, ext_index);
+
             let mut events = vec![];
-            while let Some(event) = sub.next().await {
-                events.push(event?);
+            while let Some(maybe_event) = sub.next().await {
+                match maybe_event {
+                    Ok(event) => {
+                        log::info!(
+                            "process_block>[{:#?}]=> Ok Event-{:?}",
+                            line!(),
+                            event
+                        );
+                        events.push(event);
+                    }
+                    Err(err) => {
+                        log::info!(
+                            "process_block>[{:#?}]=> Err Event-{:?}",
+                            line!(),
+                            err
+                        );
+                    }
+                }
+                // events.push(event?);
             }
+
             Ok(ExtrinsicSuccess {
                 block: block_hash,
                 extrinsic: ext_hash,

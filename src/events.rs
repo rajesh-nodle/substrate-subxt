@@ -162,7 +162,29 @@ impl<T: Runtime + System> EventsDecoder<T> {
                 &mut event_data,
                 &mut event_errors,
             );
-            let raw = match result {
+
+            // let raw = match result {
+            //     Ok(()) => {
+            //         log::debug!("raw bytes: {}", hex::encode(&event_data),);
+
+            //         let event = RawEvent {
+            //             module: module.name().to_string(),
+            //             variant: event_metadata.name.clone(),
+            //             data: event_data,
+            //         };
+
+            //         // topics come after the event data in EventRecord
+            //         let _topics = Vec::<T::Hash>::decode(input)?;
+            //         Raw::Event(event)
+            //     }
+            //     Err(err) => return Err(err),
+            // };
+
+            // if event_errors.is_empty() {
+            //     r.push((phase.clone(), raw));
+            // }
+
+            match result {
                 Ok(()) => {
                     log::debug!("raw bytes: {}", hex::encode(&event_data),);
 
@@ -174,14 +196,10 @@ impl<T: Runtime + System> EventsDecoder<T> {
 
                     // topics come after the event data in EventRecord
                     let _topics = Vec::<T::Hash>::decode(input)?;
-                    Raw::Event(event)
+                    r.push((phase.clone(), Raw::Event(event)));
                 }
                 Err(err) => return Err(err),
             };
-
-            if event_errors.is_empty() {
-                r.push((phase.clone(), raw));
-            }
 
             for err in event_errors {
                 r.push((phase.clone(), Raw::Error(err)));
